@@ -1,0 +1,72 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+jobs:
+  - job: Windows
+    displayName: Windows isolated installer test
+    pool:
+      vmImage: windows-latest
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.11"
+      - powershell: |
+           python -B -m unittest discover -s tests -v
+           python -B install_skills.py --doctor --home "$(Agent.TempDirectory)\factory-ai-doctor-home" --json
+           python -B install_skills.py --list-targets
+           .\install.ps1 --source "$(Build.SourcesDirectory)\tests\fixtures\skills" --home "$(Agent.TempDirectory)\factory-ai-home" --target agents
+           .\install.ps1 --source "$(Build.SourcesDirectory)\tests\fixtures\skills" --home "$(Agent.TempDirectory)\factory-ai-home" --target agents
+           .\install.cmd --source "$(Build.SourcesDirectory)\tests\fixtures\skills" --home "$(Agent.TempDirectory)\factory-ai-cmd-home" --target agents
+          if (-not (Test-Path "$(Agent.TempDirectory)\factory-ai-home\.agents\skills\sample-skill\SKILL.md")) {
+            throw "La skill de prueba no fue instalada"
+          }
+        displayName: Test install and idempotency
+
+  - job: Linux
+    displayName: Linux isolated installer test
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.11"
+      - script: |
+          set -eu
+           python3 -B -m unittest discover -s tests -v
+           python3 -B install_skills.py --doctor --home "$(Agent.TempDirectory)/factory-ai-doctor-home" --json
+           python3 -B install_skills.py --list-targets
+           sh -n install.sh
+          chmod +x install.sh
+          ./install.sh --source "$(Build.SourcesDirectory)/tests/fixtures/skills" --home "$(Agent.TempDirectory)/factory-ai-home" --target agents
+          ./install.sh --source "$(Build.SourcesDirectory)/tests/fixtures/skills" --home "$(Agent.TempDirectory)/factory-ai-home" --target agents
+          test -f "$(Agent.TempDirectory)/factory-ai-home/.agents/skills/sample-skill/SKILL.md"
+        displayName: Test install and idempotency
+
+  - job: macOS
+    displayName: macOS isolated installer test
+    pool:
+      vmImage: macOS-latest
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.11"
+      - script: |
+          set -eu
+           python3 -B -m unittest discover -s tests -v
+           python3 -B install_skills.py --doctor --home "$(Agent.TempDirectory)/factory-ai-doctor-home" --json
+           python3 -B install_skills.py --list-targets
+           sh -n install.sh
+          chmod +x install.sh
+          ./install.sh --source "$(Build.SourcesDirectory)/tests/fixtures/skills" --home "$(Agent.TempDirectory)/factory-ai-home" --target agents
+          ./install.sh --source "$(Build.SourcesDirectory)/tests/fixtures/skills" --home "$(Agent.TempDirectory)/factory-ai-home" --target agents
+          test -f "$(Agent.TempDirectory)/factory-ai-home/.agents/skills/sample-skill/SKILL.md"
+        displayName: Test install and idempotency

@@ -1,0 +1,60 @@
+{
+  "agents": {
+    "agents": {
+      "relative_path": ".agents/skills",
+      "detection_paths": [],
+      "executables": [],
+      "status": "supported",
+      "requires_restart": true,
+      "verification": "filesystem"
+    },
+    "claude": {
+      "relative_path": ".claude/skills",
+      "detection_paths": [".claude"],
+      "executables": ["claude"],
+      "status": "supported",
+      "requires_restart": true,
+      "verification": "filesystem"
+    },
+    "opencode": {
+      "relative_path": ".config/opencode/skills",
+      "detection_paths": [".config/opencode"],
+      "executables": ["opencode"],
+      "status": "supported",
+      "requires_restart": true,
+      "verification": "filesystem"
+    },
+    "codex": {
+      "relative_path": ".codex/skills",
+      "detection_paths": [".codex"],
+      "executables": ["codex"],
+      "status": "conditional",
+      "requires_restart": true,
+      "verification": "manual"
+    },
+    "gemini": {
+      "relative_path": ".gemini/skills",
+      "detection_paths": [".gemini"],
+      "executables": ["gemini"],
+      "status": "conditional",
+      "requires_restart": true,
+      "verification": "manual"
+    },
+    "cursor": {
+      "relative_path": ".cursor/skills",
+      "detection_paths": [".cursor"],
+      "executables": [],
+      "status": "conditional",
+      "requires_restart": true,
+      "verification": "manual"
+    },
+    "copilot": {
+      "relative_path": ".copilot/skills",
+      "detection_paths": [".copilot"],
+      "executables": ["copilot", "github-copilot-cli"],
+      "status": "conditional",
+      "requires_restart": true,
+      "verification": "manual"
+    }
+  }
+}
